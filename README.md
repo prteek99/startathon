@@ -12,14 +12,12 @@ Our AI is very good at identifying objects. We measured it using a score called 
 | Accuracy (mIoU) | 0.6151 | 61.51% |
 | Recall (Finding objects) | 0.7025 | 70.25% |
 
-> [!NOTE]
-> **Final Mean IoU recorded during evaluation: 0.6156**
 <img width="1918" height="977" alt="image" src="https://github.com/user-attachments/assets/6dc5f219-3056-471f-90e7-516e19121963" />
 
 ---
 
 ## 💾 2. Download the Trained AI
-Because the AI's "brain" file is quite large (90MB), it is stored on Google Drive. You need this file to run the project.
+Because the AI's "brain" file is large (90MB), it is stored on Google Drive. You need this file to run the project.
 
 * **File Name:** `best_multiclass_model.pth`
 * **Size:** 90 MB
@@ -59,17 +57,46 @@ Building this AI wasn't easy! Here is what we did step-by-step to make it better
 
 ---
 
-## 🛠️ 5. How to Run This Project
+## 🛠️ 5. How to Run & Verify This Project
 
-### 📦 What you need
-Make sure you have Python installed, then run this command to get the tools:
-`pip install torch segmentation-models-pytorch albumentations opencv-python matplotlib tqdm`
+To verify our results (**mAP50: 0.8037**), please follow these steps:
 
-### 🎮 How to use
-1. **To Test:** Put your images in the folder and run `python test.py`. It will show you a comparison of the Original vs. the AI's Prediction.
-2. **To Train:** If you want to train the AI again from scratch, run `python train.py`.
+### 📦 1. Setup Environment
+First, install the required configuration files and tools:
+```bash
+pip install -r requirements.txt
+```
+## 💾 2. Download the Trained AI
+Because the AI's "brain" file is large (90MB), it is stored on Google Drive. You need this file to run the project.
 
-### 🏗️ Technical Specs
-* **AI Architecture:** U-Net++ (ResNet34 Encoder)
-* **Training Time:** 44 Rounds (Epochs)
-* **Speed:** Very Fast (< 50ms per image)
+* **File Name**: `best_multiclass_model.pth`
+* **Size**: 90 MB
+* **Brain Type**: U-Net++ (ResNet34)
+
+[**➡️ Click here to Download the Model Weights**](https://drive.google.com/file/d/1cv1gDyeddIbIQz6ymJMULvLkTbyRNFWN/view?usp=sharing)
+
+---
+
+## 🛠️ 3. How to Use & Verify
+
+Follow these steps to test the model or start a new training session.
+
+### 🎮 **To Test & Verify**
+Use this command to randomly select images, calculate the final score, and see a visual comparison of the results:
+```bash
+python test.py
+```
+
+🧠 To Train
+If you want to train the AI again from scratch using the dataset:
+```bash
+python train.py
+```
+
+### 🏗️ Technical Specifications
+
+| Feature | Details |
+| :--- | :--- |
+| **AI Architecture** | U-Net++ (ResNet34 Encoder) |
+| **Training Time** | 44 Rounds (Epochs) |
+| **Inference Speed** | Very Fast (< 50ms per image on GPU) |

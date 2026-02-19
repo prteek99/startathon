@@ -1,89 +1,75 @@
-## 🏆 Final Model Results
+# 🌵 Offroad Driving AI - Desert Scene Segmentation
+
+This project is a smart AI system designed for off-road vehicles. It helps robot vehicles "see" and understand desert environments by identifying trees, rocks, sand, and sky in real-time. This was built for the **Duality AI Hackathon**.
+
+## 📊 1. Final Results (How well did the AI do?)
+
+Our AI is very good at identifying objects. We measured it using a score called **mAP50** (which tells us how precise the AI is).
 
 | Metric | Score | Percentage |
 | :--- | :--- | :--- |
-| **mAP50 (Precision)** | **0.8037** | **80.37%** |
-| mIoU (Mean IoU) | 0.6151 | 61.51% |
-| Recall | 0.7025 | 70.25% |
+| **Precision (mAP50)** | **0.8037** | **80.37%** |
+| Accuracy (mIoU) | 0.6151 | 61.51% |
+| Recall (Finding objects) | 0.7025 | 70.25% |
 
-🏆 FINAL MEAN IoU: 0.6156
-========================================
+> [!NOTE]
+> **Final Mean IoU recorded during evaluation: 0.6156**
+<img width="1918" height="977" alt="image" src="https://github.com/user-attachments/assets/6dc5f219-3056-471f-90e7-516e19121963" />
 
+---
 
+## 💾 2. Download the Trained AI
+Because the AI's "brain" file is quite large (90MB), it is stored on Google Drive. You need this file to run the project.
 
-<img width="1918" height="977" alt="image" src="https://github.com/user-attachments/assets/459246ad-c9da-4a99-9ffc-fd78c79c8ce5" />
+* **File Name:** `best_multiclass_model.pth`
+* **Size:** 90 MB
+* **Brain Type:** U-Net++ (ResNet34)
 
-1. Methodology & Workflow Log
-Here is a summary of the major challenges we faced and how we solved them to improve our model's performance.
+[**➡️ Click here to Download the Model Weights**](https://drive.google.com/file/d/1cv1gDyeddIbIQz6ymJMULvLkTbyRNFWN/view?usp=sharing)
 
-Entry 1: Data Preparation
+---
 
-Task: Setting up the dataset for the model.
+## 🚀 3. Our Journey (The Log Book)
 
-Issue Faced: The dataset used non-standard Class IDs (e.g., 100 for Trees, 10000 for Sky). The standard AI model expected sequential numbers (0, 1, 2...), causing errors during the start of training.
+Building this AI wasn't easy! Here is what we did step-by-step to make it better.
 
-Solution: We wrote a custom Class Mapper function. This function converts the raw IDs (100, 200, etc.) into a 0-9 format before feeding them into the model.
+### 📁 Getting the Data Ready
+* **The ID Problem:** The dataset used weird numbers to identify objects (like 100 for a tree). The AI couldn't understand this.
+  * **Solution:** We built a "Translator" (Class Mapper) that changed those numbers into simple labels from 0 to 9.
+* **The "Black Screen" Mystery:** At first, all our data looked like solid black boxes. We realized the data was "16-bit," which is too high-quality for basic photo viewers.
+  * **Solution:** We changed the code to read the high-quality files properly so the AI could finally "see" the training images.
 
-Entry 2: Handling High-Bit Depth Masks
+### 🧠 Training the AI
+* **Learning Small Objects:** Early on, the AI was great at seeing the big sky but kept missing small **Rocks** and **Logs**.
+  * **Solution:** We changed the "Loss Function" (the AI's teacher). We told the teacher to give the AI extra "homework" specifically on small, hard-to-see objects.
+* **Handling Light & Shadows:** The AI was getting confused by different lighting in the desert.
+  * **Solution:** We used "Data Augmentation." We intentionally blurred some photos and changed the brightness so the AI learned to work in any weather.
 
-Task: Loading Ground Truth Masks.
+---
 
-Issue Faced: The training masks appeared completely black, and the model was not learning anything. This happened because the masks were 16-bit images, but standard image loaders were reading them as 8-bit, losing all the data.
+## 🔍 4. Fixing Mistakes (Failure Analysis)
 
-Solution: We modified the image loading code to use cv2.imread(path, -1). This flag forced the code to read the raw, unchanged 16-bit data, revealing the hidden class IDs.
+### Case 1: Hidden Rocks
+* **Problem:** If a rock was half-covered by dry grass, the AI ignored it.
+* **The Fix:** We adjusted the training settings to be more "sensitive" to textures, helping the AI distinguish between grass and stones.
 
-Entry 3: Initial Training Performance
+### Case 2: The "Solid Red" Error
+* **Problem:** During our first tests, the output images looked like solid red blocks.
+* **The Fix:** We realized the computer was reading the data in "Color" when it should have been "Black & White." Once we fixed the setting, the colors came back perfectly.
 
-Task: Baseline Model Training (Epochs 1-10).
+---
 
-Initial IoU Score: ~0.58
+## 🛠️ 5. How to Run This Project
 
-Issue Faced: The model achieved high accuracy on large classes (Sky, Landscape) but performed poorly on small, difficult objects like "Logs" and "Rocks" (Low Recall).
+### 📦 What you need
+Make sure you have Python installed, then run this command to get the tools:
+`pip install torch segmentation-models-pytorch albumentations opencv-python matplotlib tqdm`
 
-Solution: We changed the Loss Function. Instead of simple CrossEntropy, we implemented a combination of Dice Loss + Focal Loss. Focal Loss forces the model to focus harder on small, difficult-to-classify objects.
+### 🎮 How to use
+1. **To Test:** Put your images in the folder and run `python test.py`. It will show you a comparison of the Original vs. the AI's Prediction.
+2. **To Train:** If you want to train the AI again from scratch, run `python train.py`.
 
-Entry 4: Improving Generalization
-
-Task: Final Model Optimization (Epochs 10-40).
-
-Issue Faced: The model started overfitting (memorizing) the training data and struggled with lighting changes in the validation set.
-
-Solution: We introduced Heavy Data Augmentation. We added random rotations, color jitter (brightness/contrast changes), and Gaussian blur to the training pipeline. This helped the model learn to recognize objects even in different environmental conditions.
-
-Entry 5: Visualization Bug Fix
-
-Task: Generating Final Submission Images.
-
-Issue Faced: When generating the comparison report, the "Ground Truth" images appeared as solid red/orange blocks. The system was misinterpreting the mask channels (RGB vs. Grayscale).
-
-Solution: We updated the testing script to strictly enforce 2D (1-Channel) reading of masks. This corrected the visualization, allowing us to accurately compare predictions against the ground truth.
-
-2. Failure Case Analysis
-(Note for you: In your report, paste the images we generated in Test_Visualizations folder that match these descriptions)
-
-Case 1: Small Object Occlusion
-
-Observation: The model initially failed to detect "Rocks" when they were partially hidden by "Dry Grass."
-
-Why it happened: The texture of dry grass and small rocks is very similar in color.
-
-Fix: We increased the weight of the Focal Loss function, which penalizes the model more heavily for missing these hard examples.
-
-Case 2: The "Solid Red" Visualization Error
-
-Observation: During testing, the Ground Truth masks appeared as a single solid color (Orange/Red), making evaluation impossible.
-
-Why it happened: The code was reading the mask file as a 3-channel color image, but the class ID data was only present in a single channel.
-
-Fix: We modified the code to explicitly read the masks in Grayscale Mode, ensuring the class IDs were preserved correctly.
-
-3. Final Results Summary
-Model Architecture: U-Net++ (ResNet34 Encoder)
-
-Total Epochs: 40
-
-Loss Function: DiceLoss + FocalLoss
-
-Final IoU Score: [Insert your final score from the terminal here, e.g., 0.72]
-
-Inference Speed: < 50ms per image (Verified on GPU)
+### 🏗️ Technical Specs
+* **AI Architecture:** U-Net++ (ResNet34 Encoder)
+* **Training Time:** 44 Rounds (Epochs)
+* **Speed:** Very Fast (< 50ms per image)

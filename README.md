@@ -1,20 +1,16 @@
-📊 EVALUATION REPORT
-========================================
-CLASS NAME           | IoU SCORE
-----------------------------------------
-Trees                | 0.7626
-Lush Bushes          | 0.6523
-Dry Grass            | 0.7005
-Dry Bushes           | 0.4873
-Ground Clutter       | 0.4199
-Flowers              | 0.6368
-Logs                 | 0.3906
-Rocks                | 0.4313
-Landscape            | 0.6847
-Sky                  | 0.9905
-========================================
+## 🏆 Final Model Results
+
+| Metric | Score | Percentage |
+| :--- | :--- | :--- |
+| **mAP50 (Precision)** | **0.8037** | **80.37%** |
+| mIoU (Mean IoU) | 0.6151 | 61.51% |
+| Recall | 0.7025 | 70.25% |
+
 🏆 FINAL MEAN IoU: 0.6156
 ========================================
+
+
+
 <img width="1918" height="977" alt="image" src="https://github.com/user-attachments/assets/459246ad-c9da-4a99-9ffc-fd78c79c8ce5" />
 
 1. Methodology & Workflow Log
